@@ -1,36 +1,34 @@
 const http = require('http');
-const fs = require('fs');
-const path = require('path');
 const url = require('url');
 
-let common = require('./modules/common');
+let routes = require('./modules/routes');
 
 http.createServer((req, res) => {
 
-    let pathName = req.url; // 获取到请求的url
+    routes.static(req, res, 'static')
 
-    pathName = url.parse(pathName).pathname; // 使用url内置模块获取路径名
-    pathName = pathName !== '/' ? pathName : '/index.html' // 获取到/就默认为/index.html
-
-    let extname = path.extname(pathName);  // 使用内容模块path获取文件后缀名
-
-    if (pathName !== "/favicon.ico") {
-        fs.readFile(path.join(__dirname, './static') + pathName, (err, data) => {
-            // 使用path根据当前路劲获得读取文件的相对路径
-            if (err) {
-                res.writeHead(404, {
-                    "Content-Type": "text/html;charset=UTF-8"
-                });
-                res.end('404这个网页不存在');
-            }
-            // let mime = common.getMime(extname);  // 使用自定义模块根据后缀名获取Content-Type的值
-            let mime = common.getFileMime(extname);  // 使用自定义模块根据后缀名获取Content-Type的值
-
-            res.writeHead(200, {
-                "Content-Type": "" + mime + ";charset=UTF-8"
-            });
-            res.end(data);
-        })
+    let pathName = url.parse(req.url).pathname;
+    console.log(pathName);
+    if (pathName === '/login') {
+        res.writeHead(200, {
+            "Content-Type": "text/html;charset=UTF-8"
+        });
+        res.end('正在操作登录页面')
+    } else if (pathName === '/register') {
+        res.writeHead(200, {
+            "Content-Type": "text/html;charset=UTF-8"
+        });
+        res.end('正在操作注册页面')
+    } else if (pathName === '/admin') {
+        res.writeHead(200, {
+            "Content-Type": "text/html;charset=UTF-8"
+        });
+        res.end('处理之后的业务逻辑')
+    } else {
+        // res.writeHead(404, {
+        //     "Content-Type": "text/html;charset=UTF-8"
+        // });
+        // res.end('404页面不存在')
     }
 
 }).listen(3000);
